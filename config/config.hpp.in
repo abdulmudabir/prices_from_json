@@ -1,0 +1,9 @@
+#ifndef __CONFIG_HPP_IN__
+#define __CONFIG_HPP_IN__
+
+namespace fx {
+
+static constexpr char PROJECT_ROOT_DIR[] = "@CMAKE_CURRENT_SOURCE_DIR@/";
+
+}
+#endif
