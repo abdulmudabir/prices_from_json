@@ -6,14 +6,12 @@
 
 namespace fx {
 
-using namespace constants;
-
-struct LongLongTime { using type = int64_t; };
-struct IntBid { using type = int32_t; };
-struct IntAsk { using type = int32_t; };
-struct IntBidVolume { using type = int32_t; };
-struct IntAskVolume { using type = int32_t; };
-struct LongLongKey { using type = int64_t; };
+struct Timestamp { using type = int64_t; };
+struct Bid { using type = int32_t; };
+struct Ask { using type = int32_t; };
+struct BidVolume { using type = int32_t; };
+struct AskVolume { using type = int32_t; };
+struct Key { using type = int64_t; };
 
 template <typename T>
 auto parse(const std::string& line) {
@@ -34,8 +32,9 @@ auto snip(const std::string& line, const std::string& target) {
                             if (auto end = line.find_first_of(',', start);
                                     end != std::string::npos) {
                                         end -= std::strlen("\"}");
-                                        if constexpr (std::is_same_v<T, LongLongTime>) {
-                                            ret = std::stoll(std::string{&line[start], end - start});
+                                        if constexpr (std::is_same_v<T, Timestamp> ||
+                                                std::is_same_v<T, Key>) {
+                                                    ret = std::stoll(std::string{&line[start], end - start});
                                         } else {
                                             ret = std::stol(std::string{&line[start], end - start});
                                         }
@@ -46,39 +45,39 @@ auto snip(const std::string& line, const std::string& target) {
 }
 
 template <>
-auto parse<LongLongTime>(const std::string& line) {
+auto parse<Timestamp>(const std::string& line) {
     constexpr char TIME_STR[]{"\"time\":"};
-    return snip<LongLongTime>(line, TIME_STR);
+    return snip<Timestamp>(line, TIME_STR);
 }
 
 template <>
-auto parse<IntBid>(const std::string& line) {
+auto parse<Bid>(const std::string& line) {
     constexpr char BID_STR[]{"\"bid\":"};
-    return snip<IntBid>(line, BID_STR);
+    return snip<Bid>(line, BID_STR);
 }
 
 template <>
-auto parse<IntAsk>(const std::string& line) {
+auto parse<Ask>(const std::string& line) {
     constexpr char ASK_STR[]{"\"ask\":"};
-    return snip<IntAsk>(line, ASK_STR);
+    return snip<Ask>(line, ASK_STR);
 }
 
 template <>
-auto parse<IntBidVolume>(const std::string& line) {
+auto parse<BidVolume>(const std::string& line) {
     constexpr char BID_VOLUME_STR[]{"\"bidVolume\":"};
-    return snip<IntBidVolume>(line, BID_VOLUME_STR);
+    return snip<BidVolume>(line, BID_VOLUME_STR);
 }
 
 template <>
-auto parse<IntAskVolume>(const std::string& line) {
+auto parse<AskVolume>(const std::string& line) {
     constexpr char ASK_VOLUME_STR[]{"\"askVolume\":"};
-    return snip<IntAskVolume>(line, ASK_VOLUME_STR);
+    return snip<AskVolume>(line, ASK_VOLUME_STR);
 }
 
 template <>
-auto parse<LongLongKey>(const std::string& line) {
+auto parse<Key>(const std::string& line) {
     constexpr char KEY_STR[]{"\"key\":"};
-    return snip<LongLongKey>(line, KEY_STR);
+    return snip<Key>(line, KEY_STR);
 }
 
 }
