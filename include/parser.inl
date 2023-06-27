@@ -32,7 +32,7 @@ void Parser::Run() {
 
     for (std::string line; std::getline(input_file, line); ++i) {
         auto qptr = std::make_shared<Quote>(line);
-        if (i == 0) {   // unlikely?
+        if UNLIKELY(i == 0) {
             start_time = qptr->timestamp_;
             bid_sum += qptr->bidPrice_;
             ask_sum += qptr->askPrice_;

@@ -49,3 +49,11 @@ set(APP "euraud")
 add_executable(${APP} ${SOURCES})
 
 install(TARGETS ${APP} DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/bin)
+
+set(UTEST_EXEC "utest")
+add_subdirectory(tests)
+enable_testing()
+add_test(
+    NAME ${UTEST_EXEC}
+    COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/build/tests/${UTEST_EXEC}
+)

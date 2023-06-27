@@ -19,6 +19,7 @@ struct Quote {
         askVolume_ = parse<AskVolume>(line);
         key_ = parse<Key>(line);
     }
+    Quote() = default;
 
     int64_t timestamp_{0ll};
     int32_t bidPrice_{0};
