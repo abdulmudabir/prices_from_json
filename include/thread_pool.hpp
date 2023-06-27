@@ -56,10 +56,9 @@ class ThreadPool {
             });
         }
         cv_.notify_one();
-        // submitted a Job, but how do you know that it's done?
-
-        // do we need to get a future to this promise?
     }
+    ThreadPool(const ThreadPool&) = delete;
+    ThreadPool& operator=(const ThreadPool&) = delete;
   private:
     std::vector<std::thread> workers_;
     using Job = std::function<void()>;

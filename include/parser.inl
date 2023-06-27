@@ -5,6 +5,7 @@
 #include <cstdio>
 #include <cstring>
 #include "quote.hpp"
+#include <future>
 
 namespace fx {
 
@@ -43,6 +44,9 @@ void Parser::Run() {
             quote::stats(quotes_vec, begin, i, bid_sum, ask_sum, output_file);
 #elif defined(POOL)
             pool_->Submit(quote::stats, quotes_vec, begin, i, bid_sum, ask_sum, output_file, std::ref(outputMutex_));
+#elif defined(ASYNC)
+            static_cast<void>(std::async(std::launch::async, quote::stats, std::ref(quotes_vec), begin, i, bid_sum, ask_sum, output_file, std::ref(outputMutex_)));
+            // deliberately ignore return-type
 #endif
             begin = i;
             start_time = qptr->timestamp_;
@@ -58,6 +62,8 @@ void Parser::Run() {
         quote::stats(quotes_vec, begin, i, bid_sum, ask_sum, output_file);
 #elif defined(POOL)
         pool_->Submit(quote::stats, quotes_vec, begin, i, bid_sum, ask_sum, output_file, std::ref(outputMutex_));
+#elif defined(ASYNC)
+        static_cast<void>(std::async(std::launch::async, quote::stats, std::ref(quotes_vec), begin, i, bid_sum, ask_sum, output_file, std::ref(outputMutex_)));
 #endif
     }
 

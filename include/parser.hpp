@@ -20,7 +20,9 @@ class Parser {
   private:
     std::string jsonFileName_{fx::PROJECT_ROOT_DIR};
 #ifndef SERIAL
+#ifdef POOL
     std::unique_ptr<ThreadPool> pool_;
+#endif
     std::mutex outputMutex_;
 #endif
 };
