@@ -2,7 +2,7 @@
 #define __PARSER_INL__
 
 #include <fstream>
-#include <vector>
+#include <cstdio>
 #include <cstring>
 #include "quote.hpp"
 
@@ -18,8 +18,8 @@ void Parser::Run() {
         return;
     }
     constexpr char OUTPUT_FILENAME[]{"output.txt"};
-    std::ofstream output_file(OUTPUT_FILENAME, std::ios::trunc);
-    if (! output_file.is_open()) {
+    auto output_file = std::fopen(OUTPUT_FILENAME, "w");
+    if (! output_file) {
         std::cerr << "Error: Unable to open output file: '" << OUTPUT_FILENAME << "'\n";
         return;
     }
@@ -39,8 +39,11 @@ void Parser::Run() {
             continue;
         }
         if (qptr->timestamp_ - start_time > THIRTY_MINS) {
-            // dispatch background threads
+#ifdef SERIAL
             quote::stats(quotes_vec, begin, i, bid_sum, ask_sum, output_file);
+#elif defined(POOL)
+            pool_->Submit(quote::stats, quotes_vec, begin, i, bid_sum, ask_sum, output_file, std::ref(outputMutex_));
+#endif
             begin = i;
             start_time = qptr->timestamp_;
             bid_sum = 0ll;
@@ -49,12 +52,21 @@ void Parser::Run() {
         bid_sum += qptr->bidPrice_;
         ask_sum += qptr->askPrice_;
         quotes_vec.push_back(qptr);
-        // process remaining
+    }
+    if (quotes_vec[i - 1]->timestamp_ - start_time < THIRTY_MINS) { // process remaining quotes
+#ifdef SERIAL
+        quote::stats(quotes_vec, begin, i, bid_sum, ask_sum, output_file);
+#elif defined(POOL)
+        pool_->Submit(quote::stats, quotes_vec, begin, i, bid_sum, ask_sum, output_file, std::ref(outputMutex_));
+#endif
     }
 
+#ifdef POOL
+    pool_->Shutdown();
+#endif
     input_file.close();
-    output_file.close();
+    std::fclose(output_file);
 }
 
-}
+}   // namespace fx
 #endif

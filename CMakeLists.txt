@@ -22,6 +22,23 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 include_directories(include)
 configure_file(config/config.hpp.in ${CMAKE_CURRENT_SOURCE_DIR}/include/config.hpp)
 
+option(SERIAL "Run program serially" OFF)
+option(POOL "Run program parallelly using a ThreadPool" OFF)
+option(ASYNC "Run program parallelly using asynchronous tasks" OFF)
+if (SERIAL)
+    set(POOL OFF)
+    set(ASYNC OFF)
+    add_compile_definitions(SERIAL)
+elseif (ASYNC)
+    set(SERIAL OFF)
+    set(POOL OFF)
+    add_compile_definitions(ASYNC)
+else()
+    set(SERIAL OFF)
+    set(ASYNC OFF)
+    add_compile_definitions(POOL)
+endif()
+
 set(SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
 
 set(SOURCES
