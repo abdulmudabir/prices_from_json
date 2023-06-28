@@ -1,3 +1,10 @@
+/**
+ * @brief A set of methods used to selectively capture info
+ *  like Timestamps, Bid Prices, Ask Prices, etc. from every line
+ *  in the input JSON dump. The parsed info is then packaged into
+ *  a Quote object.
+ *
+ */
 #ifndef __UTILS_HPP__
 #define __UTILS_HPP__
 

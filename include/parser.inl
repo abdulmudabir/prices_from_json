@@ -1,3 +1,9 @@
+/**
+ * @brief Implementation details of the Parser object.
+ *
+ * This is just a separation of the implementation of the Run()
+ * member function of Parser.
+ */
 #ifndef __PARSER_INL__
 #define __PARSER_INL__
 
@@ -11,6 +17,16 @@ namespace fx {
 
 using namespace constants;
 
+/**
+ * @brief Run() allows the option to either serially or parallelly process
+ * batches of Quotes from the JSON quotes-dump file.
+ *
+ * The presence of the SERIAL, POOL, ASYNC macros is intended to help with
+ * performance assessments for the batch-processing. The user may determine the type of
+ * processing at compile-time using cmake flags.
+ *
+ * @return void
+ */
 inline
 void Parser::Run() {
     std::ifstream input_file(jsonFileName_.c_str());

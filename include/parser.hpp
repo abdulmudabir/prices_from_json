@@ -1,3 +1,10 @@
+/**
+ * @brief class Parser
+ *
+ * The Parser object is responsible for fully reading the MongoDB json dump and
+ * publishing the mean, median, max, min for every 30-minute time interval
+ * of Quotes to an output text file.
+ */
 #ifndef __PARSER_HPP__
 #define __PARSER_HPP__
 
@@ -12,7 +19,7 @@ class Parser {
     Parser(const char* filename) {
         jsonFileName_.append(filename);
 #ifdef POOL
-        constexpr auto NUM_THREADS{4};
+        constexpr auto NUM_THREADS{4};  // 4 were benchmarked as most-performant
         pool_ = std::make_unique<ThreadPool>(NUM_THREADS);
 #endif
     }

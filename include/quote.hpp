@@ -1,3 +1,12 @@
+/**
+ * @brief An FX quote representation in an object called Quote.
+ *
+ * For each line of quote from the JSON dump, a corresponding Quote
+ * object below stores significant info like Bid, Ask, Volume, etc.
+ *
+ * Certain utilities related to the calculation of stats like the
+ * Mean, Median, Maximum and Minimum of Bids/Asks are also defined here.
+ */
 #ifndef __QUOTE_HPP__
 #define __QUOTE_HPP__
 
@@ -52,6 +61,27 @@ constexpr auto BORDER_WIDTH{195};
 
 }   // anonymous
 
+/**
+ * @brief This is where each 30-min batch of Quotes is processed to
+ *  produce stats like the Mean, Median, Max, Min of Quotes for the batch.
+ *
+ * The stats are written to a text file. Note that the user defines
+ * whether the stats may be processed by this Callable in a serial
+ * or parallel manner.
+ *
+ * Also note that the indexes of Quotes below form a set like:
+ *  [startIdx, endIdx).
+ *
+ * @param quotes All the observed Quotes thus far
+ * @param startIdx Index of the first Quote in the batch of 30-minutes
+ * @param endIdx Index past the last Quote in the batch of 30-minutes
+ * @param bidSum Sum of all the Bids seen in the 30-min batch
+ * @param askSum Sum of all the Asks seen in the 30-min batch
+ * @param ofp Handle to the output text file
+ * @param outputMutex A mutex to lock exclusive writes to the output file
+ *
+ * @return void
+ */
 auto stats = [](std::vector<std::shared_ptr<Quote>>& quotes, std::size_t startIdx, std::size_t endIdx, int64_t bidSum, int64_t askSum, std::FILE* ofp
 #ifndef SERIAL
     , std::mutex& outputMutex
@@ -111,6 +141,14 @@ auto stats = [](std::vector<std::shared_ptr<Quote>>& quotes, std::size_t startId
 #endif
 };
 
+/**
+ * @brief Write a border for the table header in the output file
+ *  before writing all stats.
+ *
+ * @param ofp Output file handle
+ *
+ * @return void
+ */
 auto write_file_header = [](std::FILE* ofp) {
     constexpr char QUOTE_RANGE[]{"Quote Range"};
     constexpr char MIN_BID[]{"Min Bid"};
